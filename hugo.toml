@@ -1,0 +1,30 @@
+baseURL = 'https://andrewfranklinleo.com/'
+languageCode = 'en-us'
+title = 'Andrew Franklin Leo'
+theme = 'sovereign-theme'
+# Force Reload Trigger
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[[cascade]]
+  type = 'podcast'
+  [cascade._target]
+    path = '/expressions/podcasts/**'
+
+[[cascade]]
+  type = 'knowledge'
+  [cascade._target]
+    path = '/expressions/knowledge/**'
+
+[[cascade]]
+  type = 'event'
+  [cascade._target]
+    path = '/expressions/events/**'
+
+[[cascade]]
+  type = 'community'
+  [cascade._target]
+    path = '/expressions/community/**'
