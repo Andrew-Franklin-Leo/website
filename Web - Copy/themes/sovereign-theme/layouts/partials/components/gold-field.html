@@ -1,0 +1,188 @@
+<canvas id="sovereign-gold-field"></canvas>
+
+<style>
+    #sovereign-gold-field {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        /* Behind content but in front of background color */
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+        /* As requested */
+        opacity: 0.8;
+        /* We will control alpha internally, but this adds a global tuning knob */
+    }
+
+    /* Ensure body has a background that allows this to show */
+    body {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+<script>
+    (function () {
+        /**
+         * SOVEREIGN GOLD FIELD PHYSICS ENGINE
+         * Principle 1: Gold is Matter (Mass, Inertia, Viscosity)
+         * Principle 2: Gold is Conductivity (Flow)
+         * Principle 3: Motion is Deliberate (Low Frequency, No Bounce)
+         */
+
+        const canvas = document.getElementById('sovereign-gold-field');
+        const ctx = canvas.getContext('2d');
+
+        // Physics State
+        let time = 0;
+        const state = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            scrollY: window.scrollY,
+            mouseX: window.innerWidth / 2,
+            mouseY: window.innerHeight / 2,
+            // Inertial Targets (The "Gold" lags behind these)
+            targetScrollY: window.scrollY,
+            targetMouseX: window.innerWidth / 2,
+            targetMouseY: window.innerHeight / 2
+        };
+
+        // Configuration - STRICT PHYSICS
+        const CONFIG = {
+            // "Extremely slow motion (cycles >= 20s)"
+            timeScale: 0.0002,
+            // "Opacity between 3%–8%"
+            baseAlpha: 0.05,
+            alphaVar: 0.03,
+            // "Inertia... Gold responds last, but decisively."
+            inertia: 0.02, // Very low lerp factor for high mass feel
+            // "Gold depends on density... influence surrounding layout"
+            gridSize: 60, // Size of noise grid cells
+        };
+
+        // Resize Handler
+        function resize() {
+            state.width = window.innerWidth;
+            state.height = window.innerHeight;
+            canvas.width = state.width;
+            canvas.height = state.height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Input Tracking (Conductivity)
+        window.addEventListener('scroll', () => {
+            state.targetScrollY = window.scrollY;
+        }, { passive: true });
+
+        window.addEventListener('mousemove', (e) => {
+            state.targetMouseX = e.clientX;
+            state.targetMouseY = e.clientY;
+        }, { passive: true });
+
+        // Simple Simplex-like Noise Implementation (Fast 2D)
+        // Using a permutation table for deterministic "randomness"
+        const perm = new Uint8Array(512);
+        for (let i = 0; i < 256; i++) perm[i] = perm[i + 256] = Math.floor(Math.random() * 256);
+
+        function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        function lerp(t, a, b) { return a + t * (b - a); }
+        function grad(hash, x, y) {
+            const h = hash & 15;
+            const u = h < 8 ? x : y, v = h < 4 ? y : h == 12 || h == 14 ? x : 0;
+            return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+        }
+
+        function noise(x, y) {
+            const X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+            x -= Math.floor(x); y -= Math.floor(y);
+            const u = fade(x), v = fade(y);
+            const A = perm[X] + Y, B = perm[X + 1] + Y;
+            return lerp(v, lerp(u, grad(perm[A], x, y), grad(perm[B], x - 1, y)),
+                lerp(u, grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1)));
+        }
+
+        // The "Field" Render Loop
+        function animate() {
+            // Update Physics - Heavy Inertia
+            // We interpret scroll as a "force" pushing the field down/up
+            // We interpret mouse as a "magnetic" attractor
+
+            state.scrollY = lerp(CONFIG.inertia, state.scrollY, state.targetScrollY);
+            state.mouseX = lerp(CONFIG.inertia, state.mouseX, state.targetMouseX);
+            state.mouseY = lerp(CONFIG.inertia, state.mouseY, state.targetMouseY);
+
+            time += CONFIG.timeScale;
+
+            ctx.clearRect(0, 0, state.width, state.height);
+
+            // Draw the "Gold Fog" using noise
+            // We act as if looking through a cloudy liquid gold medium
+
+            const cols = Math.ceil(state.width / CONFIG.gridSize);
+            const rows = Math.ceil(state.height / CONFIG.gridSize);
+
+            // Optimization: Don't draw every pixel. Draw large overlapping soft circles based on noise.
+            // This is "Gold as a Field".
+
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    // Coordinate in noise space
+                    // We add slow time drift + scroll factor (y offset) + mouse interaction
+                    const noiseX = x * 0.1 + Math.cos(time * 0.5);
+                    const noiseY = y * 0.1 + Math.sin(time * 0.3) + (state.scrollY * 0.001);
+
+                    // Interaction: Mouse creates a "Ripple" that propagates through the field
+                    const dx = (x * CONFIG.gridSize) - state.mouseX;
+                    const dy = (y * CONFIG.gridSize) - state.mouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Ripple Logic: Sine wave based on distance and time
+                    // Frequency: 0.05 (controls ring spacing)
+                    // Speed: 5 (controls outward flow)
+                    // Decay: max(0, 1 - dist/800) (limits range)
+
+                    let interaction = 0;
+                    if (dist < 800) {
+                        const wave = Math.sin(dist * 0.05 - time * 5);
+                        const decay = Math.pow(1 - dist / 800, 2); // Exaggerated decay for center focus
+                        interaction = wave * decay * 0.5; // Scale effect strength
+                    }
+
+                    const value = noise(noiseX + interaction, noiseY + interaction);
+
+                    // Render only significant "gold veins" (positive noise)
+                    if (value > 0.2) {
+                        const alpha = CONFIG.baseAlpha + (value * CONFIG.alphaVar); // Range 0.05 - 0.08 approx
+                        const radius = CONFIG.gridSize * 1.5 * (1 + value);
+
+                        const screenX = x * CONFIG.gridSize;
+                        const screenY = y * CONFIG.gridSize;
+
+                        // Color: "Gold must be matter, not color"
+                        // We use the specific metallic gold palette requested earlier
+                        // #D4AF37 (Metallic Gold), #B8860B (Dark Gold)
+                        // We mix them based on noise value
+
+                        const gradient = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, radius);
+                        gradient.addColorStop(0, `rgba(212, 175, 55, ${alpha})`); // Core
+                        gradient.addColorStop(1, `rgba(184, 134, 11, 0)`); // Fade
+
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start Physics
+        requestAnimationFrame(animate);
+
+    })();
+</script>

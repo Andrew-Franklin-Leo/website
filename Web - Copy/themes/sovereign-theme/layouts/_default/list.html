@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div style="padding-top: 60px; text-align: center;">
+    <h1 class="hero-title" style="font-size: 48px;">{{ .Title }}</h1>
+    <p class="hero-subtitle" style="max-width: 600px; margin: 0 auto 60px auto;">{{ .Description }}</p>
+</div>
+
+<div class="bento-container">
+    {{ range .Pages }}
+    <a href="{{ .RelPermalink }}" class="bento-card">
+        <h3>{{ .Title }}</h3>
+        <p>{{ .Summary | truncate 120 }}</p>
+    </a>
+    {{ end }}
+</div>
+{{ end }}

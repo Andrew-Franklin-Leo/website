@@ -1,0 +1,138 @@
+<script>
+    (function () {
+        /**
+         * SOVEREIGN MASS PHYSICS
+         * Principle: Gold is heavy (Inertia).
+         * Implementation: Mass-spring-damper system for UI interactions.
+         */
+
+        const MASS = 1.5;
+        const STIFFNESS = 0.08;
+        const DAMPING = 0.85;
+
+        class HeavyElement {
+            constructor(el) {
+                this.el = el;
+                this.rect = el.getBoundingClientRect();
+                this.centerX = this.rect.left + this.rect.width / 2;
+                this.centerY = this.rect.top + this.rect.height / 2;
+
+                // Physics State
+                this.pos = { x: 0, y: 0 };
+                this.vel = { x: 0, y: 0 };
+                this.target = { x: 0, y: 0 };
+                this.scale = { val: 1, vel: 0, target: 1 };
+
+                this.isHovering = false;
+                this.rafId = null;
+
+                this.initEvents();
+            }
+
+            updateRect() {
+                this.rect = this.el.getBoundingClientRect();
+                // Add current local translation to get true "origin" center
+                // This is an approximation since we transform the element itself
+                this.centerX = this.rect.left + this.rect.width / 2 - this.pos.x;
+                this.centerY = this.rect.top + this.rect.height / 2 - this.pos.y;
+            }
+
+            initEvents() {
+                this.el.addEventListener('mouseenter', () => {
+                    this.isHovering = true;
+                    this.scale.target = 0.98; // Compression
+                    this.updateRect();
+                    this.startLoop();
+                });
+
+                this.el.addEventListener('mousemove', (e) => {
+                    if (!this.isHovering) return;
+
+                    // Calculate pull
+                    const dx = e.clientX - this.centerX;
+                    const dy = e.clientY - this.centerY;
+
+                    // Limit the pull distance (The object is heavy, it won't move far)
+                    this.target.x = dx * 0.15;
+                    this.target.y = dy * 0.15;
+                });
+
+                this.el.addEventListener('mouseleave', () => {
+                    this.isHovering = false;
+                    this.target.x = 0;
+                    this.target.y = 0;
+                    this.scale.target = 1;
+                    // Loop continues until settled
+                });
+            }
+
+            update() {
+                // Spring Force X
+                const kx = (this.target.x - this.pos.x) * STIFFNESS;
+                this.vel.x += kx / MASS;
+                this.vel.x *= DAMPING;
+                this.pos.x += this.vel.x;
+
+                // Spring Force Y
+                const ky = (this.target.y - this.pos.y) * STIFFNESS;
+                this.vel.y += ky / MASS;
+                this.vel.y *= DAMPING;
+                this.pos.y += this.vel.y;
+
+                // Scale Physics
+                const ks = (this.scale.target - this.scale.val) * 0.1;
+                this.scale.vel += ks;
+                this.scale.vel *= 0.8; // More damping on scale
+                this.scale.val += this.scale.vel;
+
+                // Stop loop if settled and not hovering
+                if (!this.isHovering &&
+                    Math.abs(this.pos.x) < 0.1 &&
+                    Math.abs(this.pos.y) < 0.1 &&
+                    Math.abs(this.vel.x) < 0.01 &&
+                    Math.abs(this.scale.vel) < 0.001) {
+
+                    this.pos.x = 0;
+                    this.pos.y = 0;
+                    this.scale.val = 1;
+                    this.render();
+                    cancelAnimationFrame(this.rafId);
+                    this.rafId = null;
+                    return;
+                }
+
+                this.render();
+                this.rafId = requestAnimationFrame(this.update.bind(this));
+            }
+
+            startLoop() {
+                if (!this.rafId) {
+                    this.rafId = requestAnimationFrame(this.update.bind(this));
+                }
+            }
+
+            render() {
+                // Apply transform
+                // We use transform3d for hardware accel
+                this.el.style.transform = `translate3d(${this.pos.x}px, ${this.pos.y}px, 0) scale(${this.scale.val})`;
+            }
+        }
+
+        // Initialize Physics on Load
+        function initSovereignPhysics() {
+            // Apply to Hero CTA and Bento Cards
+            // We ignore generic links to avoid clutter
+            const candidates = document.querySelectorAll('.hero-cta, .bento-card');
+
+            candidates.forEach(el => {
+                // Remove CSS transitions that conflict with physics
+                el.style.transition = 'none';
+                new HeavyElement(el);
+            });
+        }
+
+        if (document.readyState !== 'loading') initSovereignPhysics();
+        else window.addEventListener('DOMContentLoaded', initSovereignPhysics);
+
+    })();
+</script>

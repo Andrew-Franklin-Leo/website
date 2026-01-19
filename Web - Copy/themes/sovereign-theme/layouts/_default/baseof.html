@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} - {{ .Site.Title }}{{ end }}</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/main.css?v=lightmode">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+
+<body>
+    {{ partial "components/gold-field.html" . }}
+    {{ partial "components/gold-flow.html" . }}
+    {{ partial "components/gold-physics.html" . }}
+    {{ partial "components/liquid-filters.html" . }}
+
+    <!-- Global Nav -->
+    <nav class="global-nav">
+        <div class="nav-content">
+            <a href="/" class="nav-logo" style="font-weight: 600; font-size: 19px; color: var(--text-primary);">
+                Leo</a>
+            <ul class="nav-links">
+                <li><a href="/entity">Entity</a></li>
+                <li><a href="/expressions">Expressions</a></li>
+                <li><a href="/entity/pillars">Transformation</a></li>
+            </ul>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-icon-dark">🌙</span>
+                <span class="theme-icon-light">☀️</span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; {{ now.Year }} Andrew Franklin Leo. The Sovereign Domain. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const iconDark = document.querySelector('.theme-icon-dark');
+        const iconLight = document.querySelector('.theme-icon-light');
+
+        // Check for saved user preference, if any, on load
+        let currentTheme = localStorage.getItem('theme');
+
+        // If no saved preference, default to 'light' (User Request)
+        if (!currentTheme) {
+            currentTheme = 'light';
+        }
+
+        // Apply theme
+        if (currentTheme === 'light') {
+            body.classList.add('light-mode');
+            iconDark.style.display = 'none';
+            iconLight.style.display = 'inline-block';
+        } else {
+            body.classList.remove('light-mode');
+            iconDark.style.display = 'inline-block';
+            iconLight.style.display = 'none';
+        }
+
+        // Toggle event
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+
+            if (body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+                iconDark.style.display = 'none';
+                iconLight.style.display = 'inline-block';
+            } else {
+                localStorage.setItem('theme', 'dark');
+                iconDark.style.display = 'inline-block';
+                iconLight.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

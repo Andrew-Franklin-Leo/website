@@ -1,0 +1,36 @@
+<svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+    <defs>
+        <!-- Liquid Distortion Filter (for Buttons/Hover) -->
+        <filter id="liquid-distortion">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="2" result="warp" />
+            <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="20" in="SourceGraphic" in2="warp" />
+        </filter>
+
+        <!-- Gold Shimmer/Glitter Filter (for Borders) -->
+        <filter id="gold-shimmer">
+            <!-- 1. Generate Noise for the "Glitter" texture -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+
+            <!-- 2. Color Matrix to tint it Gold -->
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise"
+                result="coloredNoise" />
+
+            <!-- 3. Specular Lighting for 3D shine -->
+            <feSpecularLighting surfaceScale="5" specularConstant="1.2" specularExponent="20" lighting-color="#FFD700"
+                in="noise" result="specular">
+                <fePointLight x="-5000" y="-10000" z="20000" />
+            </feSpecularLighting>
+
+            <!-- 4. Composite lighting over the source -->
+            <feComposite in="specular" in2="SourceAlpha" operator="in" result="specular-masked" />
+            <feComposite in="SourceGraphic" in2="specular-masked" operator="lighter" />
+        </filter>
+
+        <!-- Molten Edge Filter -->
+        <filter id="molten-edge" filterUnits="objectBoundingBox" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+    </defs>
+</svg>

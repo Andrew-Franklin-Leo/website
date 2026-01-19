@@ -1,0 +1,9 @@
+baseURL = 'https://andrewfranklinleo.com/'
+languageCode = 'en-us'
+title = 'Andrew Franklin Leo'
+theme = 'sovereign-theme'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
