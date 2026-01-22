@@ -1,0 +1,56 @@
+# SOVEREIGN DEPLOYMENT PIPELINE
+# Source: Azure DevOps (Private)
+# Target: GitHub Pages (Public)
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # FAILSAFE: Ensure we use the exact version matched to local dev
+  HUGO_VERSION: '0.121.2'
+
+steps:
+# 1. ACQUIRE TOOLING
+- script: |
+    wget https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_extended_$(HUGO_VERSION)_linux-amd64.deb
+    sudo dpkg -i hugo*.deb
+  displayName: 'Install Hugo Extended'
+
+# 2. COMPILE SYSTEM
+- script: |
+    hugo --minify
+  displayName: 'Build Production System'
+
+# 3. VERIFY ARTIFACT
+- script: |
+    if [ ! -d "public" ]; then
+      echo "##vso[task.logissue type=error]System Failure: Public directory not generated."
+      exit 1
+    fi
+  displayName: 'Audit Build Artifact'
+
+# 4. DEPLOY TO GITHUB TARGET
+- script: |
+    # Navigate to build artifact
+    cd public
+    
+    # Initialize ephemeral git for deployment
+    git init
+    git checkout -b gh-pages
+    
+    # Configure Bot Identity
+    git config user.email "deploy-agent@andrewfranklinleo.com"
+    git config user.name "Sovereign Deploy System"
+    
+    # Stage and Commit
+    git add .
+    git commit -m "Sovereign Deploy: $(Build.BuildId)"
+    
+    # PUSH TO GITHUB (Requires $(GITHUB_PAT) and $(GITHUB_REPO) variables in ADO Library)
+    # Syntax: https://<PAT>@github.com/<USER>/<REPO>.git
+    git push --force https://$(GITHUB_PAT)@github.com/$(GITHUB_REPO).git gh-pages
+  displayName: 'Propagate to GitHub Pages'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
