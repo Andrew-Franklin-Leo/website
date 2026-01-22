@@ -49,8 +49,8 @@ steps:
     git add .
     git commit -m "Sovereign Deploy: $(Build.BuildId)"
     
-    # PUSH TO GITHUB (Requires $(GITHUB_PAT) and $(GITHUB_REPO) variables in ADO Library)
-    # Syntax: https://<PAT>@github.com/<USER>/<REPO>.git
-    git push --force https://$(GITHUB_PAT)@github.com/$(GITHUB_REPO).git gh-pages
+    # PUSH TO GITHUB (Target: Andrew-Franklin-Leo/website)
+    # Requires $(GITHUB_PAT) secret in ADO Library
+    git push --force https://$(GITHUB_PAT)@github.com/Andrew-Franklin-Leo/website.git gh-pages
   displayName: 'Propagate to GitHub Pages'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
