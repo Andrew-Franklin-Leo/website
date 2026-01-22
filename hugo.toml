@@ -3,6 +3,18 @@ languageCode = 'en-us'
 title = 'Andrew Franklin Leo'
 theme = 'sovereign-theme'
 # Force Reload Trigger
+enableEmoji = false
+enableRobotsTXT = true
+
+[build]
+  writeStats = true
+
+[minify]
+  disableXML = true
+  minifyOutput = true
+
+[params]
+  description = "The Sovereign Domain of Andrew Franklin Leo."
 
 [markup]
   [markup.goldmark]
@@ -10,21 +22,6 @@ theme = 'sovereign-theme'
       unsafe = true
 
 [[cascade]]
-  type = 'podcast'
+  type = 'memory'
   [cascade._target]
-    path = '/expressions/podcasts/**'
-
-[[cascade]]
-  type = 'knowledge'
-  [cascade._target]
-    path = '/expressions/knowledge/**'
-
-[[cascade]]
-  type = 'event'
-  [cascade._target]
-    path = '/expressions/events/**'
-
-[[cascade]]
-  type = 'community'
-  [cascade._target]
-    path = '/expressions/community/**'
+    path = '/memory/**'
