@@ -19,6 +19,8 @@ if %errorlevel% neq 0 (
     git remote add %REMOTE_NAME% %GITHUB_REPO%
 ) else (
     echo [INFO] GitHub remote '%REMOTE_NAME%' detected.
+    :: Ensure URL is correct
+    git remote set-url %REMOTE_NAME% %GITHUB_REPO%
 )
 
 :: 3. Status Report
@@ -39,11 +41,18 @@ git commit -m "%COMMIT_MSG%"
 echo.
 echo [ACTION] Pushing Source to GitHub...
 echo          (This will trigger the remote Build & Deploy Action)
-git push %REMOTE_NAME% main
+echo.
+echo [IMPORTANT] If asked for credentials, use your GitHub Token.
+echo.
+
+git push -u %REMOTE_NAME% master:main
 
 if %errorlevel% neq 0 (
     echo.
-    echo [ERROR] Push failed. Check your permissions or internet connection.
+    echo [ERROR] Push failed. 
+    echo Possible reasons:
+    echo  1. You need to log in (Authentication failed).
+    echo  2. The specific restricted repository URL is unreachable.
     pause
     exit /b 1
 )
