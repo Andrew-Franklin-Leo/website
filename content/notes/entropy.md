@@ -2,6 +2,7 @@
 title: "Notes on Entropy"
 date: 2026-01-15
 summary: "Observation: The universe is decaying. This is unacceptable."
+labels: ["Physics", "Cosmology"]
 tags: ["physics", "entropy"]
 ---
 

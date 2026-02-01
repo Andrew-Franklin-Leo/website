@@ -2,7 +2,9 @@
 title: "The Ethics of Uplift"
 date: 2025-10-30
 summary: "Is it moral to drag a species into immortality against its will?"
-tags: ["ethics", "biology"]
+series: "Post-Human Ethics"
+labels: ["Ethics", "AI", "Philosophy"]
+tags: ["uplift", "morality", "evolution"]
 layout: "single"
 ---
 

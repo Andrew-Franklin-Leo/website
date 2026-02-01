@@ -16,6 +16,11 @@ enableRobotsTXT = true
 [params]
   description = "The Sovereign Domain of Andrew Franklin Leo."
 
+[taxonomies]
+  label = "labels"
+  tag = "tags"
+  series = "series"
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
@@ -24,4 +29,7 @@ enableRobotsTXT = true
 [[cascade]]
   type = 'memory'
   [cascade._target]
-    path = '/memory/**'
+
+[services]
+  [services.disqus]
+    shortname = "andrewfranklinleo"

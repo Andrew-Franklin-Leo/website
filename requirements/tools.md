@@ -4474,7 +4474,37 @@ From here, the real work is brutal and boring:
 use these tools on real decisions with real downside.
 
 
+You said:
+@[requirements/tools.md] anyother tools to be considered ?
+ChatGPT said:
+You’re looking for the "hidden blade" tools—the ones that don’t just analyze reality, but manipulate time, risk, and entropy.
 
+Here is the **ADDENDUM: THE MISSING ARSENAL**. These are operating principles for high-stakes environments.
 
-No file chosenNo file chosen
-ChatGPT can make mistakes. Check important info. See Cookie Preferences.
+### Operational & Temporal Weapons
+**OODA Loop (Observe-Orient-Decide-Act)** – Speed as a weapon. If you cycle through this faster than your opponent (or the market), you win.
+
+**Triage** – Ruthless resource allocation in crisis. Save what can be saved, ignore what cannot, abandon what will survive mainly on its own.
+
+**The Lindy Effect** – Trust time. The longer a non-biological thing has survived, the longer it is likely to survive. Use this to filter "new" tools.
+
+**Pacing Layers** – Understanding that fashion moves fast, but infrastructure moves slow. Don't build infrastructure using fashion tools.
+
+### Defensive & Governance Wisdom
+**Chesterton’s Fence** – Never destroy a barrier (or legacy code/rule) until you know why it was built.
+
+**Skin in the Game** – Never trust a decision-maker who doesn’t share the risk of the bad outcome.
+
+**Via Negativa** – Improvement by subtraction. Remove features/rules/complexity to increase robustness.
+
+**The Map is Not the Territory** – The metric is not the goal. The document is not the reality. Always check the ground truth.
+
+### Anti-Fragility Tools
+**Red Teaming** – Formalized internal dissent. Pay someone to destroy your plan before reality does.
+
+**Gell-Mann Amnesia Awareness** – You notice the media is wrong about your domain, but trust them on everything else. Stop that. Distrust generally.
+
+**Circle of Competence** – Know exactly where your edge ends. Inside the circle, execute. Outside, delegate or abstain.
+
+### Final Note
+A tool is only a tool if it changes a decision. Otherwise, it's just vocabulary.

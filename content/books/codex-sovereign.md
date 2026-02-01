@@ -2,7 +2,9 @@
 title: "Codex of the Sovereign"
 date: 2024-06-15
 summary: "The immutable laws governing Sector 7."
-tags: ["law", "codex"]
+series: "Sovereign Cycle"
+labels: ["Philosophy", "Politics"]
+tags: ["sovereignty", "power", "governance"]
 type: "books"
 ---
 
