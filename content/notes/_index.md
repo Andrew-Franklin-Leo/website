@@ -1,8 +1,8 @@
 ---
 title: "Notes"
-description: "Observations from the Eternal Throne."
+description: "Raw observations on domains, standards, and precedent."
 cascade:
   type: "notes"
 ---
 
-Brief insights and cosmic annotations.
+Brief observations and technical references.

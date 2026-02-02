@@ -1,8 +1,8 @@
 ---
 title: "Essays"
-description: "Philosophical treatises and sovereign discourse."
+description: "Sharp arguments on accountability, alignment, and power."
 cascade:
   type: "essays"
 ---
 
-Reflections on power, civilization, and the cosmic order.
+Standalone pieces on liability, game theory, and structural change.

@@ -1,8 +1,8 @@
 ---
 title: "Books"
-description: "Sovereign literature and foundational texts."
+description: "Deep work on constraints, systems, and positions of inevitability."
 cascade:
   type: "books"
 ---
 
-The written word, crystallized into permanence.
+Foundational texts on accountability architecture and structural necessity.
