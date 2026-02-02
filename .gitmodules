@@ -1,0 +1,3 @@
+[submodule "themes/sovereign-theme"]
+	path = themes/sovereign-theme
+	url = https://github.com/Andrew-Franklin-Leo/theme.git
